@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:medical_clinic_app/services/appointment_service.dart';
 
 class MakingTheAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> doctorDetails;
@@ -14,6 +13,7 @@ class MakingTheAppointmentPage extends StatefulWidget {
 }
 
 class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
+  final AppointmentService _appointmentService = AppointmentService();
   String? selectedDate;
   String? selectedTime;
   final _formKey = GlobalKey<FormState>();
@@ -32,27 +32,16 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
         'patientPhone': _patientPhoneController.text,
       };
 
-      try {
-        final response = await http.post(
-          Uri.parse('http://your-backend-url/api/appointments'),
-          headers: {'Content-Type': 'application/json'},
-          body: json.encode(appointment),
-        );
+      bool success = await _appointmentService.bookAppointment(appointment);
 
-        if (response.statusCode == 201) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Appointment booked successfully!')),
-          );
-          Navigator.pop(context);
-        } else {
-          final responseBody = json.decode(response.body);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(responseBody['message'] ?? 'Error booking appointment')),
-          );
-        }
-      } catch (e) {
+      if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred. Please try again.')),
+          const SnackBar(content: Text('Appointment booked successfully!')),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Error booking appointment. Try again.')),
         );
       }
     }
@@ -178,7 +167,3 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
     );
   }
 }
-
-
-
-

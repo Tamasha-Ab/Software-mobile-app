@@ -1,39 +1,20 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const Appointment = require('../models/appointments');
 
 const router = express.Router();
 
-// Appointment Schema
-const appointmentSchema = new mongoose.Schema({
-  doctorName: { type: String, required: true },
-  date: { type: String, required: true },
-  time: { type: String, required: true },
-  patientName: { type: String, required: true },
-  patientEmail: { type: String, required: true },
-  patientPhone: { type: String, required: true },
-});
-
-const Appointment = mongoose.model('Appointment', appointmentSchema);
-
-// Save an appointment
+// Book an appointment
 router.post('/appointments', async (req, res) => {
   try {
-    const {
-      doctorName,
-      date,
-      time,
-      patientName,
-      patientEmail,
-      patientPhone,
-    } = req.body;
+    const { doctorName, date, time, patientName, patientEmail, patientPhone } = req.body;
 
-    // Check if the selected time slot is already booked
+    // Check if the slot is already booked
     const existingAppointment = await Appointment.findOne({ doctorName, date, time });
     if (existingAppointment) {
       return res.status(400).json({ message: 'This time slot is already booked.' });
     }
 
-    // Save the appointment
+    // Create and save appointment
     const newAppointment = new Appointment({
       doctorName,
       date,
@@ -44,9 +25,20 @@ router.post('/appointments', async (req, res) => {
     });
 
     const savedAppointment = await newAppointment.save();
-    res.status(201).json(savedAppointment);
+    res.status(201).json({ message: 'Appointment booked successfully', appointment: savedAppointment });
+
   } catch (error) {
     res.status(500).json({ message: 'Error saving appointment', error });
+  }
+});
+
+// Get all appointments
+router.get('/appointments', async (req, res) => {
+  try {
+    const appointments = await Appointment.find();
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving appointments', error });
   }
 });
 
