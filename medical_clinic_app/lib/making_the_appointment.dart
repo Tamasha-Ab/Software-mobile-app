@@ -165,7 +165,7 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   backgroundColor: const Color.fromARGB(255, 99, 181, 249),
                 ),
-                child: const Text('Enter Username to get Patient Information'),
+                child: const Text('Press Enter to get Patient Information'),
               ),
               const SizedBox(height: 20),
               TextFormField(
