@@ -1,21 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:medical_clinic_app/services/appointment_service.dart';
 
-class ViewAppointmentsPage extends StatefulWidget {
+class ViewAppointmentsPage extends StatelessWidget {
   final String patientId;
+  final AppointmentService _appointmentService = AppointmentService();
 
-  const ViewAppointmentsPage({required this.patientId, Key? key})
-      : super(key: key);
-
-  @override
-  _ViewAppointmentsPageState createState() => _ViewAppointmentsPageState();
-}
-
-class _ViewAppointmentsPageState extends State<ViewAppointmentsPage> {
-  final List<Map<String, String>> appointments = [
-    {'doctorName': 'Dr. John Doe', 'date': '2025-01-10', 'time': '10:00 AM'},
-    {'doctorName': 'Dr. Jane Smith', 'date': '2025-01-15', 'time': '2:00 PM'},
-    {'doctorName': 'Dr. Emily Clark', 'date': '2025-01-20', 'time': '11:30 AM'},
-  ];
+  ViewAppointmentsPage({required this.patientId});
 
   @override
   Widget build(BuildContext context) {
@@ -24,30 +14,31 @@ class _ViewAppointmentsPageState extends State<ViewAppointmentsPage> {
         title: const Text('My Appointments'),
         backgroundColor: const Color.fromARGB(255, 99, 181, 249),
       ),
-      body: appointments.isEmpty
-          ? const Center(
-              child: Text(
-                'No Appointments Found',
-                style: TextStyle(fontSize: 16, color: Colors.black54),
-              ),
-            )
-          : ListView.builder(
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: _appointmentService.getAppointments(patientId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return const Center(child: Text('Error loading appointments.'));
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No appointments found.'));
+          } else {
+            final appointments = snapshot.data!;
+            return ListView.builder(
               itemCount: appointments.length,
               itemBuilder: (context, index) {
                 final appointment = appointments[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                      vertical: 8, horizontal: 16),
-                  child: ListTile(
-                    leading: const Icon(Icons.calendar_today,
-                        color: Colors.blue),
-                    title: Text('Doctor: ${appointment['doctorName']}'),
-                    subtitle: Text(
-                        'Date: ${appointment['date']}\nTime: ${appointment['time']}'),
-                  ),
+                return ListTile(
+                  title: Text('Dr. ${appointment['doctorName']}'),
+                  subtitle: Text('${appointment['date']} at ${appointment['time']}'),
+                  trailing: Text(appointment['patientName']),
                 );
               },
-            ),
+            );
+          }
+        },
+      ),
     );
   }
 }

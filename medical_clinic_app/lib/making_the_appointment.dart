@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:medical_clinic_app/services/appointment_service.dart';
+import 'package:medical_clinic_app/services/patient_service.dart'; // Import the PatientService to fetch patient info
 
 class MakingTheAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> doctorDetails;
@@ -14,12 +15,36 @@ class MakingTheAppointmentPage extends StatefulWidget {
 
 class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
   final AppointmentService _appointmentService = AppointmentService();
+  final PatientService _patientService = PatientService(); // Instance of PatientService to fetch patient info
   String? selectedDate;
   String? selectedTime;
   final _formKey = GlobalKey<FormState>();
+  final _patientUsernameController = TextEditingController(); // Controller for the username field
   final _patientNameController = TextEditingController();
   final _patientEmailController = TextEditingController();
   final _patientPhoneController = TextEditingController();
+
+  Future<void> _fetchPatientInfo() async {
+    final username = _patientUsernameController.text;
+    try {
+      final patientInfo = await _patientService.fetchPatientInfo(username);
+      if (patientInfo != null) {
+        setState(() {
+          _patientNameController.text = patientInfo['fullname'];
+          _patientEmailController.text = patientInfo['email'];
+          _patientPhoneController.text = patientInfo['phone'];
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Patient information not found.')),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error fetching patient information: $e')),
+      );
+    }
+  }
 
   Future<void> _submitAppointment() async {
     if (_formKey.currentState!.validate()) {
@@ -30,6 +55,7 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
         'patientName': _patientNameController.text,
         'patientEmail': _patientEmailController.text,
         'patientPhone': _patientPhoneController.text,
+        'patientUsername': _patientUsernameController.text, // Include the username
       };
 
       bool success = await _appointmentService.bookAppointment(appointment);
@@ -121,6 +147,25 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
                   border: OutlineInputBorder(),
                   contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 ),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _patientUsernameController,
+                decoration: const InputDecoration(
+                  labelText: 'Your Username',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Please enter your username' : null,
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _fetchPatientInfo,
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  backgroundColor: const Color.fromARGB(255, 99, 181, 249),
+                ),
+                child: const Text('Enter Username to get Patient Information'),
               ),
               const SizedBox(height: 20),
               TextFormField(

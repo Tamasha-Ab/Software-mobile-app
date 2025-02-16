@@ -1,12 +1,13 @@
 const express = require('express');
 const Appointment = require('../models/appointments');
+const Patient = require('../models/patient');
 
 const router = express.Router();
 
 // Book an appointment
 router.post('/appointments', async (req, res) => {
   try {
-    const { doctorName, date, time, patientName, patientEmail, patientPhone } = req.body;
+    const { doctorName, date, time, patientName, patientEmail, patientPhone, patientUsername } = req.body;
 
     // Check if the slot is already booked
     const existingAppointment = await Appointment.findOne({ doctorName, date, time });
@@ -22,6 +23,7 @@ router.post('/appointments', async (req, res) => {
       patientName,
       patientEmail,
       patientPhone,
+      patientUsername, // Include patientUsername
     });
 
     const savedAppointment = await newAppointment.save();
@@ -39,6 +41,33 @@ router.get('/appointments', async (req, res) => {
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving appointments', error });
+  }
+});
+
+// Get appointments by patient username
+router.get('/appointments/:username', async (req, res) => {
+  try {
+    const { username } = req.params;
+    const appointments = await Appointment.find({ patientUsername: username });
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: 'Error retrieving appointments', error });
+  }
+});
+
+// Define the endpoint to fetch patient info by username
+router.get('/patient/username/:username', async (req, res) => {
+  try {
+    const username = req.params.username;
+    const patient = await Patient.findOne({ username: username });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    res.status(200).json(patient);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching patient info', error: error.message });
   }
 });
 

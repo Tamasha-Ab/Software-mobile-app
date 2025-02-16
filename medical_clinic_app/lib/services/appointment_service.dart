@@ -2,7 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class AppointmentService {
-  static const String baseUrl = 'http://localhost:3000/api/appointments'; // For Android Emulator use 10.0.2.2
+  static const String baseUrl = 'http://localhost:3000/api/appointments'; 
 
   Future<bool> bookAppointment(Map<String, dynamic> appointmentData) async {
     try {
@@ -19,6 +19,17 @@ class AppointmentService {
       }
     } catch (e) {
       return false;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getAppointments(String patientId) async {
+    final response = await http.get(Uri.parse('http://localhost:3000/api/appointments?patientId=$patientId'));
+
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      return data.map((appointment) => appointment as Map<String, dynamic>).toList();
+    } else {
+      throw Exception('Failed to load appointments');
     }
   }
 }
