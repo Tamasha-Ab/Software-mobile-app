@@ -3,8 +3,9 @@ import 'making_the_appointment.dart';
 
 class DoctorDetailsPage extends StatelessWidget {
   final Map<String, dynamic> doctorDetails;
+  final String patientId;
 
-  const DoctorDetailsPage({super.key, required this.doctorDetails});
+  const DoctorDetailsPage({super.key, required this.doctorDetails, required this.patientId});
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +61,7 @@ class DoctorDetailsPage extends StatelessWidget {
                   MaterialPageRoute(
                     builder: (context) => MakingTheAppointmentPage(
                       doctorDetails: doctorDetails,
+                      patientId: patientId,
                     ),
                   ),
                 );

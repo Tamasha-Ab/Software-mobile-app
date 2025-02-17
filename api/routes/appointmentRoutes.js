@@ -7,7 +7,7 @@ const router = express.Router();
 // Book an appointment
 router.post('/appointments', async (req, res) => {
   try {
-    const { doctorName, date, time, patientName, patientEmail, patientPhone, patientUsername } = req.body;
+    const { doctorName, date, time, patientName, patientEmail, patientPhone, patientUsername, patientId } = req.body;
 
     // Check if the slot is already booked
     const existingAppointment = await Appointment.findOne({ doctorName, date, time });
@@ -23,7 +23,8 @@ router.post('/appointments', async (req, res) => {
       patientName,
       patientEmail,
       patientPhone,
-      patientUsername, // Include patientUsername
+      patientUsername,
+      patientId, // Include patientId
     });
 
     const savedAppointment = await newAppointment.save();
@@ -34,21 +35,12 @@ router.post('/appointments', async (req, res) => {
   }
 });
 
-// Get all appointments
-router.get('/appointments', async (req, res) => {
-  try {
-    const appointments = await Appointment.find();
-    res.json(appointments);
-  } catch (error) {
-    res.status(500).json({ message: 'Error retrieving appointments', error });
-  }
-});
-
-// Get appointments by patient username
-router.get('/appointments/:username', async (req, res) => {
+// Fetch appointments by patientUsername
+router.get('/appointments/username/:username', async (req, res) => {
   try {
     const { username } = req.params;
     const appointments = await Appointment.find({ patientUsername: username });
+    
     res.json(appointments);
   } catch (error) {
     res.status(500).json({ message: 'Error retrieving appointments', error });

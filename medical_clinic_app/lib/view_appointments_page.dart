@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:medical_clinic_app/services/appointment_service.dart';
 
 class ViewAppointmentsPage extends StatelessWidget {
-  final String patientId;
+  final String username;
   final AppointmentService _appointmentService = AppointmentService();
 
-  ViewAppointmentsPage({required this.patientId});
+  ViewAppointmentsPage({required this.username});
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +15,7 @@ class ViewAppointmentsPage extends StatelessWidget {
         backgroundColor: const Color.fromARGB(255, 99, 181, 249),
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
-        future: _appointmentService.fetchAppointmentsByPatientId(patientId),
+        future: _appointmentService.fetchAppointmentsByUsername(username),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());

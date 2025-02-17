@@ -4,7 +4,8 @@ import 'package:http/http.dart' as http;
 import 'doctor_details_page.dart';
 
 class MakeAppointmentPage extends StatefulWidget {
-  const MakeAppointmentPage({super.key});
+  final String patientId; 
+  const MakeAppointmentPage({super.key, required this.patientId});
 
   @override
   State<MakeAppointmentPage> createState() => _MakeAppointmentPageState();
@@ -91,6 +92,7 @@ class _MakeAppointmentPageState extends State<MakeAppointmentPage> {
                           MaterialPageRoute(
                             builder: (context) => DoctorDetailsPage(
                               doctorDetails: doctor,
+                              patientId: widget.patientId,
                             ),
                           ),
                         );

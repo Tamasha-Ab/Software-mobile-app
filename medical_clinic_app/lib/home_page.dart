@@ -71,7 +71,7 @@ class HomePage extends StatelessWidget {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => ViewAppointmentsPage(patientId: patientId), // Navigate to ViewAppointmentsPage
+                            builder: (context) => ViewAppointmentsPage(username: userName), // Navigate to ViewAppointmentsPage
                           ),
                         );
                       },
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const MakeAppointmentPage(),
+                                      builder: (context) => MakeAppointmentPage(patientId: patientId),
                                     ),
                                   );
                                 }

@@ -27,9 +27,9 @@ class AppointmentService {
     }
   }
 
-  Future<List<Map<String, dynamic>>> fetchAppointmentsByPatientId(String patientId) async {
+  Future<List<Map<String, dynamic>>> fetchAppointmentsByUsername(String username) async {
     try {
-      final response = await http.get(Uri.parse('$baseUrl/patient/$patientId'));
+      final response = await http.get(Uri.parse('$baseUrl/username/$username'));
 
       if (response.statusCode == 200) {
         List<dynamic> data = json.decode(response.body);

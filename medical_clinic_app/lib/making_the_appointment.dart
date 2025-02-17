@@ -4,8 +4,9 @@ import 'package:medical_clinic_app/services/patient_service.dart'; // Import the
 
 class MakingTheAppointmentPage extends StatefulWidget {
   final Map<String, dynamic> doctorDetails;
+  final String patientId; // Add patientId field
 
-  const MakingTheAppointmentPage({required this.doctorDetails, Key? key})
+  const MakingTheAppointmentPage({required this.doctorDetails, required this.patientId, Key? key})
       : super(key: key);
 
   @override
@@ -56,6 +57,7 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
         'patientEmail': _patientEmailController.text,
         'patientPhone': _patientPhoneController.text,
         'patientUsername': _patientUsernameController.text, // Include the username
+        'patientId': widget.patientId, // Include the patient ID
       };
 
       final result = await _appointmentService.bookAppointment(appointment);
@@ -209,4 +211,3 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
     );
   }
 }
-
