@@ -58,17 +58,14 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
         'patientUsername': _patientUsernameController.text, // Include the username
       };
 
-      bool success = await _appointmentService.bookAppointment(appointment);
+      final result = await _appointmentService.bookAppointment(appointment);
 
-      if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Appointment booked successfully!')),
-        );
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(result)),
+      );
+
+      if (result == 'Appointment booked successfully!') {
         Navigator.pop(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error booking appointment. Try again.')),
-        );
       }
     }
   }
@@ -212,3 +209,4 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
     );
   }
 }
+
