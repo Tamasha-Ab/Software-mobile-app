@@ -1,11 +1,189 @@
-import 'package:flutter/foundation.dart';
+// import 'package:flutter/foundation.dart';
+// import 'package:flutter/material.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'package:shared_preferences/shared_preferences.dart';
+// import 'registration_page.dart';
+// import 'home_page.dart';
+// import 'package:medical_clinic_app/services/token_storage.dart'; // Adjust the path as needed
+
+// class LoginPage extends StatefulWidget {
+//   const LoginPage({super.key});
+
+//   @override
+//   _LoginPageState createState() => _LoginPageState();
+// }
+
+// class _LoginPageState extends State<LoginPage> {
+//   final TextEditingController _usernameController = TextEditingController();
+//   final TextEditingController _passwordController = TextEditingController();
+//   String? _errorMessage;
+
+//   // New variable for password visibility
+//   bool _isPasswordVisible = false;
+
+//   // Handle login success by saving token and patientId and navigating
+//   void handleLoginSuccess(String token, String patientId) async {
+//     // Save the token
+//     await saveToken(token);
+
+//     // Save the patientId if needed for local use
+//     final prefs = await SharedPreferences.getInstance();
+//     await prefs.setString('patientId', patientId);
+
+//     // Navigate to the home page
+//     Navigator.pushReplacement(
+//       context,
+//       MaterialPageRoute(
+//         builder: (context) => HomePage(
+//           userName: _usernameController.text,
+//           patientId: patientId,
+//         ),
+//       ),
+//     );
+//   }
+
+//   // Login method
+//   Future<void> _login() async {
+//     final String username = _usernameController.text;
+//     final String password = _passwordController.text;
+
+//     const String url = 'http://localhost:3000/api/login'; // Replace with your actual endpoint
+
+//     try {
+//       final response = await http.post(
+//         Uri.parse(url),
+//         headers: <String, String>{
+//           'Content-Type': 'application/json; charset=UTF-8',
+//         },
+//         body: jsonEncode(<String, String>{
+//           'username': username,
+//           'password': password,
+//         }),
+//       );
+
+//       if (response.statusCode == 200) {
+//         // Successful login
+//         final responseBody = json.decode(response.body);
+//         final token = responseBody['token']; // API token key
+//         final patientId = responseBody['patientId']; // Extract patientId
+
+//         if (kDebugMode) {
+//           print('Login successful! Token: $token, PatientId: $patientId');
+//         }
+
+//         // Handle login success
+//         handleLoginSuccess(token, patientId);
+//       } else {
+//         setState(() {
+//           _errorMessage = 'Invalid username or password';
+//           if (kDebugMode) {
+//             print('Server response: ${response.body}');
+//           }
+//         });
+//       }
+//     } catch (e) {
+//       setState(() {
+//         _errorMessage = 'An error occurred: $e';
+//       });
+//     }
+//   }
+
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       body: Container(
+//         color: const Color.fromARGB(255, 155, 239, 237),
+//         child: Column(
+//           mainAxisAlignment: MainAxisAlignment.center,
+//           children: <Widget>[
+//             Center(
+//               child: Image.network(
+//                 'https://s3-media0.fl.yelpcdn.com/bphoto/kROaBMMNs2u1t9RHYMbv9g/1000s.jpg',
+//                 width: 100,
+//                 height: 100,
+//               ),
+//             ),
+//             const Text(
+//               'Welcome to Care Plus',
+//               style: TextStyle(
+//                 fontSize: 24,
+//                 fontWeight: FontWeight.bold,
+//               ),
+//               textAlign: TextAlign.center,
+//             ),
+//             const SizedBox(height: 30),
+//             TextField(
+//               controller: _usernameController,
+//               decoration: InputDecoration(
+//                 labelText: 'Username',
+//                 errorText: _errorMessage,
+//               ),
+//             ),
+//             TextField(
+//               controller: _passwordController,
+//               decoration: InputDecoration(
+//                 labelText: 'Password',
+//                 errorText: _errorMessage,
+//                 suffixIcon: IconButton(
+//                   icon: Icon(
+//                     _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+//                   ),
+//                   onPressed: () {
+//                     // Toggle password visibility
+//                     setState(() {
+//                       _isPasswordVisible = !_isPasswordVisible;
+//                     });
+//                   },
+//                 ),
+//               ),
+//               obscureText: !_isPasswordVisible,
+//             ),
+//             const SizedBox(height: 20),
+//             ElevatedButton(
+//               onPressed: _login,
+//               child: const Text('Login'),
+//             ),
+//             const SizedBox(height: 10),
+//             const Text(
+//               "Don't have an account? Register",
+//               style: TextStyle(fontSize: 16),
+//             ),
+//             const SizedBox(height: 10),
+//             ElevatedButton(
+//               onPressed: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (context) => const RegistrationPage(),
+//                   ),
+//                 );
+//               },
+//               child: const Text('Register'),
+//             ),
+//             if (_errorMessage != null)
+//               Padding(
+//                 padding: const EdgeInsets.only(top: 8.0),
+//                 child: Text(
+//                   _errorMessage!,
+//                   style: const TextStyle(color: Colors.red),
+//                 ),
+//               ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
+
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'registration_page.dart';
 import 'home_page.dart';
-import 'package:medical_clinic_app/services/token_storage.dart'; // Adjust the path as needed
+import 'package:medical_clinic_app/services/token_storage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -18,20 +196,12 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String? _errorMessage;
-
-  // New variable for password visibility
   bool _isPasswordVisible = false;
 
-  // Handle login success by saving token and patientId and navigating
   void handleLoginSuccess(String token, String patientId) async {
-    // Save the token
     await saveToken(token);
-
-    // Save the patientId if needed for local use
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('patientId', patientId);
-
-    // Navigate to the home page
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
@@ -43,132 +213,170 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Login method
   Future<void> _login() async {
     final String username = _usernameController.text;
     final String password = _passwordController.text;
-
-    const String url = 'http://localhost:3000/api/login'; // Replace with your actual endpoint
+    const String url = 'http://localhost:3000/api/login';
 
     try {
       final response = await http.post(
         Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(<String, String>{
-          'username': username,
-          'password': password,
-        }),
+        headers: {'Content-Type': 'application/json; charset=UTF-8'},
+        body: jsonEncode({'username': username, 'password': password}),
       );
 
       if (response.statusCode == 200) {
-        // Successful login
         final responseBody = json.decode(response.body);
-        final token = responseBody['token']; // API token key
-        final patientId = responseBody['patientId']; // Extract patientId
-
-        if (kDebugMode) {
-          print('Login successful! Token: $token, PatientId: $patientId');
-        }
-
-        // Handle login success
+        final token = responseBody['token'];
+        final patientId = responseBody['patientId'];
         handleLoginSuccess(token, patientId);
       } else {
-        setState(() {
-          _errorMessage = 'Invalid username or password';
-          if (kDebugMode) {
-            print('Server response: ${response.body}');
-          }
-        });
+        setState(() => _errorMessage = 'Invalid username or password');
       }
     } catch (e) {
-      setState(() {
-        _errorMessage = 'An error occurred: $e';
-      });
+      setState(() => _errorMessage = 'An error occurred: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: const Color.fromARGB(255, 155, 239, 237),
+      body: SingleChildScrollView(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Center(
-              child: Image.network(
-                'https://s3-media0.fl.yelpcdn.com/bphoto/kROaBMMNs2u1t9RHYMbv9g/1000s.jpg',
-                width: 100,
-                height: 100,
-              ),
-            ),
-            const Text(
-              'Welcome to Care Plus',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            TextField(
-              controller: _usernameController,
-              decoration: InputDecoration(
-                labelText: 'Username',
-                errorText: _errorMessage,
-              ),
-            ),
-            TextField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                errorText: _errorMessage,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          children: [
+            Stack(
+              children: [
+                Container(
+                  height: 300,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Color.fromARGB(255, 186, 205, 226), Color(0xFF67C8FF)],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(50),
+                      bottomRight: Radius.circular(50),
+                    ),
                   ),
-                  onPressed: () {
-                    // Toggle password visibility
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
                 ),
-              ),
-              obscureText: !_isPasswordVisible,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _login,
-              child: const Text('Login'),
-            ),
-            const SizedBox(height: 10),
-            const Text(
-              "Don't have an account? Register",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const RegistrationPage(),
+                Positioned(
+                  top: 80,
+                  left: 0,
+                  right: 0,
+                  child: Column(
+                    children: [
+                      Image.asset(
+                        'assets/doctor.png',
+                        width: 150,
+                        height: 100,
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "CarePlus App",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
                   ),
-                );
-              },
-              child: const Text('Register'),
-            ),
-            if (_errorMessage != null)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red),
                 ),
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    height: 40,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                children: [
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'User name',
+                      prefixIcon: const Icon(Icons.person),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: !_isPasswordVisible,
+                    decoration: InputDecoration(
+                      labelText: 'Password',
+                      prefixIcon: const Icon(Icons.lock),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() => _isPasswordVisible = !_isPasswordVisible);
+                        },
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                    ),
+                  ),
+                  if (_errorMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: Text(
+                        _errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _login,
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(25),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 50,
+                        vertical: 15,
+                      ),
+                    ),
+                    child: const Text('Log In'),
+                  ),
+                  const SizedBox(height: 15),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const RegistrationPage(),
+                        ),
+                      );
+                    },
+                    child: const Text(
+                      "Don't have an account? Sign up",
+                      style: TextStyle(color: Colors.blue),
+                    ),
+                  ),
+                ],
               ),
+            ),
           ],
         ),
       ),
