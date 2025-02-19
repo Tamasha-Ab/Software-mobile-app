@@ -81,130 +81,146 @@ class _MakingTheAppointmentPageState extends State<MakingTheAppointmentPage> {
         title: const Text('Make an Appointment'),
         backgroundColor: const Color.fromARGB(255, 99, 181, 249),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Dr. ${widget.doctorDetails['fullName'] ?? 'N/A'}',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 20),
-              const Text(
-                'Select a Date:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              DropdownButtonFormField<String>(
-                value: selectedDate,
-                items: availableTimes != null
-                    ? availableTimes.keys
-                        .map((day) => DropdownMenuItem<String>(
-                              value: day,
-                              child: Text(day),
-                            ))
-                        .toList()
-                    : [],
-                onChanged: (value) {
-                  setState(() {
-                    selectedDate = value;
-                    selectedTime = null; // Reset time when date changes
-                  });
-                },
-                validator: (value) => value == null ? 'Please select a date' : null,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color.fromARGB(255, 186, 205, 226), Color(0xFF67C8FF)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: MediaQuery.of(context).size.height - kToolbarHeight,
+            ),
+            child: IntrinsicHeight(
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Dr. ${widget.doctorDetails['fullName'] ?? 'N/A'}',
+                      style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Select a Date:',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: selectedDate,
+                      items: availableTimes != null
+                          ? availableTimes.keys
+                              .map((day) => DropdownMenuItem<String>(
+                                    value: day,
+                                    child: Text(day),
+                                  ))
+                              .toList()
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedDate = value;
+                          selectedTime = null; // Reset time when date changes
+                        });
+                      },
+                      validator: (value) => value == null ? 'Please select a date' : null,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Select a Time:',
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    DropdownButtonFormField<String>(
+                      value: selectedTime,
+                      items: (selectedDate != null &&
+                              availableTimes != null &&
+                              availableTimes[selectedDate] != null)
+                          ? (availableTimes[selectedDate] as List)
+                              .map((time) => DropdownMenuItem<String>(
+                                    value: time,
+                                    child: Text(time),
+                                  ))
+                              .toList()
+                          : [],
+                      onChanged: (value) {
+                        setState(() {
+                          selectedTime = value;
+                        });
+                      },
+                      validator: (value) => value == null ? 'Please select a time' : null,
+                      decoration: const InputDecoration(
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _patientUsernameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Your Username',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Please enter your username' : null,
+                    ),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: _fetchPatientInfo,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        backgroundColor: const Color.fromARGB(255, 99, 181, 249),
+                      ),
+                      child: const Text('Press Enter to get Patient Information'),
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _patientNameController,
+                      decoration: const InputDecoration(
+                        labelText: 'Your Name',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _patientEmailController,
+                      decoration: const InputDecoration(
+                        labelText: 'Your Email',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Please enter your email' : null,
+                    ),
+                    const SizedBox(height: 20),
+                    TextFormField(
+                      controller: _patientPhoneController,
+                      decoration: const InputDecoration(
+                        labelText: 'Your Phone Number',
+                        border: OutlineInputBorder(),
+                      ),
+                      validator: (value) =>
+                          value == null || value.isEmpty ? 'Please enter your phone number' : null,
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _submitAppointment,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 15),
+                        backgroundColor: const Color.fromARGB(255, 99, 181, 249),
+                      ),
+                      child: const Center(child: Text('Confirm Appointment')),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(height: 20),
-              const Text(
-                'Select a Time:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              DropdownButtonFormField<String>(
-                value: selectedTime,
-                items: (selectedDate != null &&
-                        availableTimes != null &&
-                        availableTimes[selectedDate] != null)
-                    ? (availableTimes[selectedDate] as List)
-                        .map((time) => DropdownMenuItem<String>(
-                              value: time,
-                              child: Text(time),
-                            ))
-                        .toList()
-                    : [],
-                onChanged: (value) {
-                  setState(() {
-                    selectedTime = value;
-                  });
-                },
-                validator: (value) => value == null ? 'Please select a time' : null,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _patientUsernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Username',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter your username' : null,
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: _fetchPatientInfo,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  backgroundColor: const Color.fromARGB(255, 99, 181, 249),
-                ),
-                child: const Text('Press Enter to get Patient Information'),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _patientNameController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Name',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) => value == null || value.isEmpty ? 'Please enter your name' : null,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _patientEmailController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Email',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter your email' : null,
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _patientPhoneController,
-                decoration: const InputDecoration(
-                  labelText: 'Your Phone Number',
-                  border: OutlineInputBorder(),
-                ),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Please enter your phone number' : null,
-              ),
-              const Spacer(),
-              ElevatedButton(
-                onPressed: _submitAppointment,
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  backgroundColor: const Color.fromARGB(255, 99, 181, 249),
-                ),
-                child: const Center(child: Text('Confirm Appointment')),
-              ),
-            ],
+            ),
           ),
         ),
       ),
