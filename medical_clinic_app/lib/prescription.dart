@@ -1,6 +1,9 @@
+import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pdf/widgets.dart' as pw;
+import 'package:path_provider/path_provider.dart';
 
 class PrescriptionPage extends StatefulWidget {
   final String patientUsername;
@@ -50,13 +53,62 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
     }
   }
 
+  Future<void> generateAndSavePdf(Map<String, dynamic> prescription) async {
+  final pdf = pw.Document();
+
+  pdf.addPage(
+    pw.Page(
+      build: (pw.Context context) => pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          pw.Text("Medical Prescription", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 10),
+          pw.Text("Doctor: ${prescription['doctorName']}", style: pw.TextStyle(fontSize: 18)),
+          pw.Text("Date: ${prescription['date']}", style: pw.TextStyle(fontSize: 16)),
+          pw.SizedBox(height: 10),
+          pw.Text("Medicines:", style: pw.TextStyle(fontSize: 16, fontWeight: pw.FontWeight.bold)),
+          pw.SizedBox(height: 5),
+          for (var medicine in prescription['medicines'])
+            pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                pw.Text("- ${medicine['name']} (${medicine['dosage']})"),
+                pw.Text("  Instructions: ${medicine['instructions']}"),
+                pw.SizedBox(height: 5),
+              ],
+            ),
+        ],
+      ),
+    ),
+  );
+
+  try {
+    final directory = await getApplicationDocumentsDirectory(); // ✅ Works across platforms
+    final path = "${directory.path}/prescription_${prescription['date']}.pdf";
+    final file = File(path);
+    await file.writeAsBytes(await pdf.save());
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Prescription saved to: $path")),
+    );
+
+    print("PDF saved at: $path"); // ✅ Debugging log
+  } catch (e) {
+    print("Error saving PDF: $e");
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Failed to save PDF: $e")),
+    );
+  }
+}
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Prescriptions'),
         centerTitle: true,
-        backgroundColor:  const Color(0xFF69B5F7),
+        backgroundColor: const Color(0xFF69B5F7),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -116,6 +168,15 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
                                     subtitle: Text("Instructions: ${medicine['instructions']}"),
                                   );
                                 }).toList(),
+                              ),
+                              const Divider(),
+                              Center(
+                                child: ElevatedButton.icon(
+                                  icon: const Icon(Icons.download),
+                                  label: const Text("Download PDF"),
+                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.blueAccent),
+                                  onPressed: () => generateAndSavePdf(prescription),
+                                ),
                               ),
                             ],
                           ),
