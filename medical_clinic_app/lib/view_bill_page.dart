@@ -182,7 +182,7 @@ class _ViewBillPageState extends State<ViewBillPage> {
                               icon: const Icon(Icons.download),
                               label: const Text("Download PDF"),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: const Color.fromARGB(247, 154, 204, 238),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
@@ -200,8 +200,8 @@ class _ViewBillPageState extends State<ViewBillPage> {
                                 ),
                               ),
                               child: const Padding(
-                                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-                                child: Text("Close", style: TextStyle(fontSize: 18, color: Colors.white)),
+                                padding: EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                                child: Text("Close", style: TextStyle(fontSize: 13, color: Colors.white)),
                               ),
                             ),
                           ],
