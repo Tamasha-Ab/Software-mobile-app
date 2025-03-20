@@ -9,8 +9,10 @@ class DoctorDetailsPage extends StatefulWidget {
 
 class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
   List<dynamic> doctors = [];
+  List<dynamic> filteredDoctors = [];
   bool isLoading = true;
   String errorMessage = '';
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -27,6 +29,7 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
       if (response.statusCode == 200) {
         setState(() {
           doctors = jsonDecode(response.body);
+          filteredDoctors = doctors; // Initially, show all doctors
           isLoading = false;
         });
       } else {
@@ -44,6 +47,15 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
     }
   }
 
+  void filterDoctors(String query) {
+    setState(() {
+      filteredDoctors = doctors.where((doctor) {
+        final specialization = doctor['specialization']?.toLowerCase() ?? '';
+        return specialization.contains(query.toLowerCase());
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,32 +64,49 @@ class _DoctorDetailsPageState extends State<DoctorDetailsPage> {
           ? Center(child: CircularProgressIndicator(color: Colors.blueAccent))
           : errorMessage.isNotEmpty
               ? Center(child: Text(errorMessage, style: TextStyle(color: Colors.red, fontSize: 16)))
-              : ListView.builder(
-                  padding: EdgeInsets.all(10),
-                  itemCount: doctors.length,
-                  itemBuilder: (context, index) {
-                    final doctor = doctors[index];
-
-                    return Card(
-                      elevation: 5,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                      margin: EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        leading: Icon(Icons.person, color: Colors.blue),
-                        title: Text("${doctor['fullName']}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                        subtitle: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [                            
-                            Text("Phone: ${doctor['phoneNumber'] ?? 'N/A'}"),
-                            Text("Specialization: ${doctor['specialization'] ?? 'N/A'}"),
-                            Text("Experience: ${doctor['yearsOfExperience'] ?? 'N/A'} years"),
-                            Text("Doctor Fee: LKR ${doctor['doctorFee'] ?? 'N/A'}"),
-
-                          ],
+              : Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(10),
+                      child: TextField(
+                        controller: searchController,
+                        onChanged: filterDoctors,
+                        decoration: InputDecoration(
+                          labelText: "Search by Specialization",
+                          prefixIcon: Icon(Icons.search),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
                         ),
                       ),
-                    );
-                  },
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        padding: EdgeInsets.all(10),
+                        itemCount: filteredDoctors.length,
+                        itemBuilder: (context, index) {
+                          final doctor = filteredDoctors[index];
+
+                          return Card(
+                            elevation: 5,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: ListTile(
+                              leading: Icon(Icons.person, color: Colors.blue),
+                              title: Text("${doctor['fullName']}", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("Phone: ${doctor['phoneNumber'] ?? 'N/A'}"),
+                                  Text("Specialization: ${doctor['specialization'] ?? 'N/A'}"),
+                                  Text("Experience: ${doctor['yearsOfExperience'] ?? 'N/A'} years"),
+                                  Text("Doctor Fee: LKR ${doctor['doctorFee'] ?? 'N/A'}"),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 ),
     );
   }
