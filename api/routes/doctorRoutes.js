@@ -65,7 +65,7 @@ router.get('/doctor', async (req, res) => {
   try {
     const doctors = await Doctor.find(
       { role: "Doctor" }, 
-      'fullName specialization yearsOfExperience'
+      'fullName specialization yearsOfExperience doctorFee phoneNumber'
     );
     res.status(200).json(doctors);
   } catch (error) {

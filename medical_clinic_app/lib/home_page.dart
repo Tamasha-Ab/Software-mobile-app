@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Add this dependency for better icons
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; 
 import 'login_page.dart';
 import 'generalPatientInformation.dart';
 import 'view_profile.dart';
@@ -8,6 +8,7 @@ import 'health_education_page.dart';
 import 'view_appointments_page.dart';
 import 'view_bill_page.dart';
 import 'prescription.dart';
+import 'DOCTORDETAILS.dart';
 
 class HomePage extends StatelessWidget {
   final String userName;
@@ -81,6 +82,17 @@ class HomePage extends StatelessWidget {
                       );
                     }),
 
+ buildSidebarButton(
+  context, FontAwesomeIcons.userDoctor, 'Doctor Details', () {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => DoctorDetailsPage()),
+    );
+  }
+),
+
+
+
                     buildSidebarButton(
                         context, FontAwesomeIcons.calendarCheck, 'View Appointments',
                         () {
@@ -104,10 +116,7 @@ class HomePage extends StatelessWidget {
                       );
                     }),
 
-                    buildSidebarButton(
-                        context, FontAwesomeIcons.fileMedical, 'View Test Results', () {
-                      // Add the correct page navigation when available
-                    }),
+                    
 
                     buildSidebarButton(
                         context, FontAwesomeIcons.prescription, 'View Prescription',

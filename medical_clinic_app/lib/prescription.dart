@@ -83,7 +83,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
   );
 
   try {
-    final directory = await getApplicationDocumentsDirectory(); // ✅ Works across platforms
+    final directory = await getApplicationDocumentsDirectory(); 
     final path = "${directory.path}/prescription_${prescription['date']}.pdf";
     final file = File(path);
     await file.writeAsBytes(await pdf.save());
@@ -92,7 +92,7 @@ class _PrescriptionPageState extends State<PrescriptionPage> {
       SnackBar(content: Text("Prescription saved to: $path")),
     );
 
-    print("PDF saved at: $path"); // ✅ Debugging log
+    print("PDF saved at: $path"); 
   } catch (e) {
     print("Error saving PDF: $e");
     ScaffoldMessenger.of(context).showSnackBar(
