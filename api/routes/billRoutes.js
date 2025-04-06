@@ -35,7 +35,7 @@ router.post("/bills", async (req, res) => {
       username,
       doctorFee,
       reportFee,
-      clinicFee,
+      clinicalFee,
       totalFee,
     });
 

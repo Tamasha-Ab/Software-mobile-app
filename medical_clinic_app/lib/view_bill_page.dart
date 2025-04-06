@@ -75,8 +75,8 @@ class _ViewBillPageState extends State<ViewBillPage> {
                 pw.Text("Billing Details", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
                 pw.Divider(),
                 pw.Text("Doctor Fee: LKR ${bill!["doctorFee"]}"),
-                pw.Text("Report Fee: LKR ${bill!["reportFee"]}"),
-                pw.Text("Clinic Fee: LKR ${bill!["clinicFee"]}"),
+                
+                pw.Text("Clinic Fee: LKR ${bill!["clinicalFee"]}"),
                 pw.Divider(),
                 pw.Text(
                   "Total Fee: LKR ${bill!["totalFee"]}",
@@ -160,8 +160,8 @@ class _ViewBillPageState extends State<ViewBillPage> {
                               ],
                               rows: [
                                 _buildDataRow("Doctor Fee", bill!["doctorFee"]),
-                                _buildDataRow("Report Fee", bill!["reportFee"]),
-                                _buildDataRow("Clinic Fee", bill!["clinicFee"]),
+                               
+                                _buildDataRow("Clinic Fee", bill!["clinicalFee"]),
                                 const DataRow(cells: [
                                   DataCell(Divider(thickness: 1, color: Colors.grey)),
                                   DataCell(Divider(thickness: 1, color: Colors.grey)),

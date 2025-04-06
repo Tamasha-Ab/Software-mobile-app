@@ -5,7 +5,7 @@ const billSchema = new mongoose.Schema({
   username:String,
   doctorFee: Number,
   reportFee: Number,
-  clinicFee: Number,
+  clinicalFee: Number,
   totalFee: Number,
   createdAt: { type: Date, default: Date.now },
 });
