@@ -63,7 +63,7 @@ const doctorRoutes = require('./routes/doctorRoutes');
 const appointmentRoutes = require('./routes/appointmentRoutes'); // Import appointment routes
 const billRoutes = require('./routes/billRoutes'); // Import bill routes
 const prescriptionRoutes = require('./routes/prescriptionRoutes'); // Import prescription routes
-
+//const doctorDetailsRoutes = require('./routes/doctorDetailsRoutes.js');
 const app = express();
 
 // Import database connection
@@ -91,7 +91,7 @@ app.use('/api', doctorRoutes);
 app.use('/api', appointmentRoutes); // API endpoint for appointments
 app.use('/api', billRoutes); // API endpoint for bills
 app.use('/api', prescriptionRoutes); // API endpoint for prescriptions
-
+//app.use('/api', doctorDetailsRoutes); // API endpoint for doctor details
 // Default route
 app.get('/', (req, res) => {
   res.send('Welcome to the Medical Clinic API');
